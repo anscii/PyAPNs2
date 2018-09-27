@@ -60,7 +60,7 @@ class Payload(object):
         self.thread_id = thread_id
 
     def __repr__(self):
-        return repr(self.dict()).decode("unicode-escape")
+        return repr(self.dict())
 
     def dict(self):
         result = {
