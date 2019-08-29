@@ -76,7 +76,7 @@ class APNsClient(object):
         if self.server:
             server = self.server
         else:
-            server = 'api.development.push.apple.com' if sandbox else 'api.push.apple.com'
+            server = 'api.sandbox.push.apple.com' if sandbox else 'api.push.apple.com'
         return SimpleAsyncHTTP2Client(
             host=server,
             port=self.port,
