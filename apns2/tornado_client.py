@@ -18,7 +18,8 @@ import jwt
 log = logging.getLogger('apns2.tornado_client')
 
 NOTIFICATION_PRIORITY = dict(immediate='10', delayed='5')
-
+SANDBOX_SERVER = 'api.sandbox.push.apple.com'
+PROD_SERVER = 'api.push.apple.com'
 
 class APNsClient(object):
 
@@ -76,7 +77,7 @@ class APNsClient(object):
         if self.server:
             server = self.server
         else:
-            server = 'api.sandbox.push.apple.com' if sandbox else 'api.push.apple.com'
+            server = SANDBOX_SERVER if sandbox else PROD_SERVER
         return SimpleAsyncHTTP2Client(
             host=server,
             port=self.port,
