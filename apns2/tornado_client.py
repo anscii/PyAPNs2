@@ -23,7 +23,8 @@ PROD_SERVER = 'api.push.apple.com'
 
 class APNsClient(object):
 
-    def __init__(self, key_file=None, teams_data=None, server=None, port=None, max_connections=3, conn_config=None):
+    def __init__(self, key_file=None, teams_data=None, server=None, port=None, max_connections=3,
+                 conn_config=None, max_connection_backoff=None, connection_backoff_step=None):
         self._header_format = 'bearer %s'
         self.__url_pattern = '/3/device/{token}'
 
@@ -39,6 +40,8 @@ class APNsClient(object):
 
         self.configure(key_file, teams_data)
         self.conn_config = conn_config
+        self.max_connection_backoff=max_connection_backoff
+        self.connection_backoff_step=connection_backoff_step
 
     def configure(self, key_file, teams_data):
         """ Настройка ID команд APNS
@@ -78,7 +81,7 @@ class APNsClient(object):
             server = self.server
         else:
             server = SANDBOX_SERVER if sandbox else PROD_SERVER
-        return SimpleAsyncHTTP2Client(
+        client = SimpleAsyncHTTP2Client(
             host=server,
             port=self.port,
             secure=True,
@@ -89,6 +92,12 @@ class APNsClient(object):
             http_client_key=client_name,
             conn_config=self.conn_config
         )
+        if self.max_connection_backoff is not None:
+            client.max_connection_backoff = self.max_connection_backoff
+        if self.connection_backoff_step is not None:
+            client.connection_backoff_step = self.connection_backoff_step
+
+        return client
 
     def _get_team(self, topic):
         return self._teams.get(topic, self._teams.get('default'))
